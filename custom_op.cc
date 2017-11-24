@@ -5,14 +5,14 @@
 using namespace tensorflow;
 
 REGISTER_OP("MyAdd")
-    .Attr("T: {float, double}")
-    .Input("aa: T")
-    .Input("bb: T")
-    .Output("added: T")
-    .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-      c->set_output(0, c->input(0));
-      return Status::OK();
-    });
+  .Attr("T: {float, double}")
+  .Input("aa: T")
+  .Input("bb: T")
+  .Output("added: T")
+  .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+    c->set_output(0, c->input(0));
+    return Status::OK();
+  });
 
 template <typename T>
 class MyAddOp : public OpKernel {
@@ -35,7 +35,7 @@ class MyAddOp : public OpKernel {
     // Set all but the first element of the output tensor to 0.
     const int N = input0.size();
 
-    #pragma omp simd
+    //#pragma omp simd
     for (int i = 0; i < N; i++) {
       output_flat(i) = input0(i) + input1(i);
     }
@@ -55,14 +55,16 @@ REGISTER_KERNEL_BUILDER(
         .TypeConstraint<double>("T"),
         MyAddOp<double>);
 
+//To do everything in C++, currently needs tensorflow source
+
 //Status MyAddGrad(const Scope& scope, const Operation& op,
 //                 const std::vector<Output>& grad_inputs,
 //                 std::Vector<Output>* grad_outputs){
 //    //y = x0 + x1
-//    //dy/dx0 = x1
-//    //dy/dx1 = x0
-//    grad_outputs->push_back(Mul(scope, grad_inputs[0], x0))
-//    grad_outputs->push_back(Mul(scope, grad_inputs[0], x1))
+//    //dy/dx0 = 1
+//    //dy/dx1 = 1
+//    grad_outputs->push_back(Mul(scope, grad_inputs[0], 1))
+//    grad_outputs->push_back(Mul(scope, grad_inputs[0], 1))
 //
 //    return scope.status();
 //}

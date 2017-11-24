@@ -1,7 +1,7 @@
 ---
 title: Custom Ops for Tensorflow
 date: 21-11-2017
-note: Verified working with r1.3
+note: Verified working with r1.4
 ---
 
 # Introduction
